@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="main.css">
+	<link rel="stylesheet" href="media.css">
+	<title>Search — AURA</title>
+	<link rel="icon" type="image/png" href="favicon.png">
+
+
+</head>
+
+<body>
+
+<div class="book__wrapper">
+
+	<!-- ── Col 1: Global navbar ───────────────────────────── -->
+	<div id="navbar-mount"></div>
+	<div id="contents-mount"></div>
+
+	<!-- ── Col 3: Results ─────────────────────────────────── -->
+	<div class="search-results-col" id="search-results-col">
+
+		<!-- Empty / initial state -->
+		<div class="sr-empty" id="sr-empty">
+			<p class="sr-empty__title">Search across all chapters</p>
+			<p class="sr-empty__hint">Results appear as you type. Try: <span class="sr-chip" data-query="value">value</span>, <span class="sr-chip" data-query="Job Graph">Job Graph</span>, <span class="sr-chip" data-query="problem">problem</span>, <span class="sr-chip" data-query="energy">energy</span></p>
+
+			<!-- Static demo cards — shown on empty state as a preview of what results look like -->
+			<div class="sr-demo-label">Results</div>
+			<div class="sr-demo">
+
+				<a class="sr-card sr-card--demo" href="index.html#what-is-value">
+					<span class="sr-card__title">What is value?</span>
+					<span class="sr-card__excerpt">…<mark>Value</mark> is performing the customer's Jobs more energy-efficiently than the alternatives. In other words, "<mark>value</mark>" is the proposition: we will perform your Job for fewer of your resources and deliver more in return — better than the competition…</span>
+				</a>
+
+				<a class="sr-card sr-card--demo" href="index.html#value-flows">
+					<span class="sr-card__title">How <mark>value</mark> flows from the Job Graph</span>
+					<span class="sr-card__excerpt">…Even simpler: <mark>value</mark> is created by transforming and simplifying the Job Graph. ABSOLUTELY EVERY successful product decision ever made can be explained as the optimization of a Job Graph…</span>
+				</a>
+
+				<a class="sr-card sr-card--demo" href="index.html#introduction">
+					<span class="sr-card__title">Introduction</span>
+					<span class="sr-card__excerpt">…The goal of Advanced Jobs To Be Done is to give you algorithms for solving the business problems product teams actually face. AJTBD is a practical extension of JTBD — from "<mark>value</mark>" as an idea to <mark>value</mark> as an algorithm…</span>
+				</a>
+
+				<a class="sr-card sr-card--demo" href="index.html#algorithm">
+					<span class="sr-card__title">The algorithm for solving business problems</span>
+					<span class="sr-card__excerpt">…Business problems are solved by applying <mark>value</mark> mechanics to the Job Graphs of specific segments. That choice — which slices of which graphs you compete for — is product strategy…</span>
+				</a>
+
+				<a class="sr-card sr-card--demo" href="index.html#everyone-says">
+					<span class="sr-card__title">Everyone says "create value" — nobody explains how</span>
+					<span class="sr-card__excerpt">…The overwhelming majority of product builders have no operational understanding of how to create <mark>value</mark>, and that creates a low-grade frustration around the whole question…</span>
+				</a>
+
+				<a class="sr-card sr-card--demo" href="index.html#job-graph">
+					<span class="sr-card__title">The Job Graph</span>
+					<span class="sr-card__excerpt">…From understanding and reshaping the Job Graph, you derive <mark>value</mark>, product strategy, and the algorithms for solving business problems: conversion, retention, ARPU, competitive escape…</span>
+				</a>
+
+				<a class="sr-card sr-card--demo" href="index.html#where-this-leads">
+					<span class="sr-card__title">Where this leads</span>
+					<span class="sr-card__excerpt">…<mark>Value</mark> is what happens when you transform a customer's Job Graph in a direction the brain notices as more energy-efficient than the alternatives…</span>
+				</a>
+
+				<a class="sr-card sr-card--wip sr-card--demo" href="#">
+					<span class="sr-card__wip">In progress</span>
+					<span class="sr-card__title">What Product <mark>Value</mark> Is and How to Create It</span>
+					<span class="sr-card__excerpt">…This chapter explores the full mechanics of product <mark>value</mark> creation, connecting needs, Jobs, and outcomes into a unified framework…</span>
+				</a>
+
+			</div>
+		</div>
+
+		<!-- No results state -->
+		<div class="sr-empty" id="sr-no-results" style="display:none">
+			<p class="sr-empty__title">No results for "<span id="sr-no-q"></span>"</p>
+			<p class="sr-empty__hint">Try a different word, or check the spelling.</p>
+		</div>
+
+		<!-- Live results -->
+		<div id="sr-results" style="display:none">
+			<p class="sr-count" id="sr-count"></p>
+			<div id="sr-items"></div>
+		</div>
+
+	</div>
+
+</div>
+
+<!-- Mobile overlay -->
+<div class="mobile-overlay" id="mobile-overlay"></div>
+
+<script>window.AURA_ACTIVE_NAV = 'nav-search';</script>
+<script src="js/main.js"></script>
+<script src="js/drawer.js"></script>
+<script src="js/loader.js"></script>
+
+
+
+</body>
+</html>
