@@ -1,0 +1,35 @@
+@media only screen and (max-width: 767px) {
+
+body {
+	font-size: 3.6vw;
+	line-height: 1.2;
+}
+
+button {
+	margin: 0 0 9vw 0;
+}
+
+.wrapper {
+	max-width: 100vw;
+	padding: 5vw;
+}
+
+.portfolio {
+	gap: 3vw;
+}
+
+.portfolio a {
+	gap: 5px;
+}
+
+p {
+	font-size: 3.6vw;
+	line-height: 1.2;
+}
+
+h1, h2 {
+	font-size: 4.4vw;
+	line-height: 1.2;
+}
+
+}

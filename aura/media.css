@@ -1,0 +1,649 @@
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE STYLES
+   Структура:
+     1. Tablet (768–1279px) — drawer для contents
+     2. Mobile (≤768px)
+        2.1  Базовый layout (header, drawer, оверлей)
+        2.2  Контент: chapter, обложка, типографика
+        2.3  Спец-блоки: skeptic, science, code, flow, scroll-section
+        2.4  Search page
+     3. Узкий мобильный (≤375px) — точечные правки
+   ═══════════════════════════════════════════════════════════════════ */
+
+
+/* ────────────────────────────────────────────────────────────────────
+   1. TABLET  768px – 1279px
+   Navbar остаётся вертикальным. Contents становится выезжающим
+   drawer'ом, который открывается кнопкой "hide contents".
+──────────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1279px) {
+
+  /* Сжимаем колонку contents до 0 */
+  .book__wrapper {
+    grid-template-columns: var(--navbar-width) 0 1fr;
+  }
+
+  /* Contents — фиксированный drawer рядом с navbar */
+  .contents {
+    position: fixed;
+    top: 0;
+    left: var(--navbar-width);
+    width: 280px;
+    height: 100%;
+    z-index: 150;
+    background-color: #FEFAF4;
+    padding: 16px 12px 80px 16px;
+    overflow-y: auto;
+    transform: translateX(calc(-100% - var(--navbar-width)));
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
+    box-shadow: none;
+  }
+
+  .contents::after {
+    display: none;
+  }
+
+  .contents.tablet-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.10);
+  }
+
+  /* Полупрозрачная подложка под drawer */
+  .tablet-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.22);
+    z-index: 140;
+  }
+
+  .tablet-overlay.visible {
+    display: block;
+  }
+
+  .chapter {
+    grid-column: 3;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   2. MOBILE  ≤768px
+   ════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── Переменные мобилы ── */
+  :root {
+    --navbar-width: 100%;
+    --contents-width: 280px;
+    --header-height: 56px;
+    --mobile-pad-x: 16px;
+  }
+
+
+  /* ──────────────────────────────────────────────────────────
+     2.1  БАЗОВЫЙ LAYOUT
+  ────────────────────────────────────────────────────────── */
+
+  html, body {
+    overflow-x: hidden;        /* страхуем от случайного overflow */
+  }
+
+  .book__wrapper {
+    display: block;             /* отключаем grid */
+    width: 100%;
+    min-height: 100vh;
+  }
+
+
+  /* ── Header (бывший вертикальный navbar) ── */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--header-height);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--mobile-pad-x);
+    z-index: 200;
+    background-color: #FEFAF4;
+    border-bottom: var(--border-width) solid var(--color-border-primary);
+  }
+
+  /* Убираем вертикальную линию-разделитель navbar */
+  .navbar::after {
+    display: none;
+  }
+
+  /* Логотип и иконки выстраиваются в ряд */
+  .navbar ul {
+    flex-direction: row;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .navbar ul li {
+    width: 44px;
+    height: 44px;
+    aspect-ratio: unset;
+    border-radius: 8px;
+    font-size: 11px;
+  }
+
+  /* Logo — отдельной шириной, чтобы вмещался текст "Aura" */
+  .navbar ul li.logo {
+    width: auto;
+    padding: 0 8px;
+  }
+
+  /* На мобиле подписи под иконками не нужны — только глифы.
+     Скрываем текстовые метки у всех пунктов, кроме логотипа. */
+  .navbar ul li:not(.logo) {
+    font-size: 0;
+  }
+
+  .navbar ul li:not(.logo) a {
+    gap: 0;
+    font-size: 0;
+  }
+
+  .navbar ul li svg {
+    width: 22px;
+    height: 22px;
+  }
+
+
+  /* ── Бургер ── */
+  /* Кнопка "hide contents" на мобиле превращается в бургер.
+     На десктопе она содержит <svg> стрелку — её нужно спрятать
+     и нарисовать три полоски через ::before. */
+  #toc-collapse {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    aspect-ratio: unset;
+    font-size: 0;
+    position: relative;
+    flex-shrink: 0;
+    color: transparent;         /* прячем потенциальный текст */
+  }
+
+  #toc-collapse svg {
+    display: none;              /* прячем десктопную стрелку */
+  }
+
+  /* Три полоски бургера */
+  #toc-collapse::before {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: #4A2E16;
+    box-shadow: 0 5px 0 #4A2E16, 0 -5px 0 #4A2E16;
+  }
+
+
+  /* ── Drawer (бывший contents) ── */
+  .contents {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: min(var(--contents-width), 88vw);
+    height: 100%;
+    z-index: 300;
+    background-color: #FEFAF4;
+    padding: 0;
+    overflow: hidden;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contents::after {
+    display: none;
+  }
+
+  .contents.mobile-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Внутренний скролл-блок учитывает header */
+  .contents-scroll {
+    padding: calc(var(--header-height) + 16px) 16px 24px;
+  }
+
+  .contents-footer {
+    padding: 12px 12px 16px;
+    border-top: var(--border-width) solid var(--color-border-primary);
+  }
+
+  /* Оверлей под drawer */
+  .mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 250;
+  }
+
+  .mobile-overlay.visible {
+    display: block;
+  }
+
+  /* Поисковая строка внутри drawer-footer — статичная */
+  .search-page__input-wrap {
+    position: static;
+    width: 100%;
+  }
+
+
+  /* ──────────────────────────────────────────────────────────
+     2.2  ОСНОВНОЙ КОНТЕНТ — chapter, обложка, типографика
+  ────────────────────────────────────────────────────────── */
+
+  /* На мобиле .chapter не должен иметь внутренний скролл —
+     иначе ломается JS, который ожидает window-скролл. */
+  .chapter {
+    grid-column: unset;
+    height: auto;
+    overflow: visible;
+    padding: calc(var(--header-height) + 16px) var(--mobile-pad-x) 60px;
+    gap: 40px;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* Заголовки */
+  h2 {
+    font-size: 44px;
+    line-height: 0.95;
+  }
+
+  h3 {
+    font-size: 32px;
+  }
+
+  .title-column h2,
+  .text-column p,
+  .text-column h3,
+  .text-column h2,
+  .text-column ul,
+  .text-column ol {
+    max-width: 100%;
+  }
+
+  .text-column img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .text-column p {
+    text-align: left;            /* отказываемся от justify на узком экране */
+    text-align-last: left;
+    hyphens: auto;
+  }
+
+  /* На десктопе списки вылезают на -24px влево, чтобы буллет был
+     за пределами текстовой колонки. На мобиле .chapter имеет
+     padding 16px, и -24px вытащит контент за край экрана. */
+  .text-column ul:not(.contents-extra):not(.chapter-main):not(.contents ul) li,
+  .text-column ol li {
+    margin-left: 0;
+  }
+
+
+  /* ── Chapter cover ── */
+  .chapter-cover {
+    max-height: none;            /* убираем жёсткое ограничение по высоте */
+    min-height: auto;
+    padding: 0;
+  }
+
+  .chapter-cover__body {
+    max-width: 100%;
+    padding: 24px 0 32px;
+  }
+
+  /* meta-строка (автор + share) переносится на узких экранах */
+  .chapter-cover__meta {
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 13px;
+  }
+
+  .chapter-cover__author {
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  /* Контрибьюторы — выровнять под мобилу */
+  .contributors-block {
+    gap: 12px;
+  }
+
+  .contributors-block.is-open {
+    max-height: none;            /* нет смысла ограничивать на мобиле */
+    overflow: visible;
+  }
+
+  .contributor {
+    min-width: 0;
+  }
+
+  .chapter-cover__titles {
+    padding: 12px 0 32px;
+  }
+
+  .chapter-cover__titles h2 {
+    font-size: 20vw;
+    line-height: 0.95;
+  }
+
+  /* Блок about — без отрицательных margin'ов, чтобы не вылезал */
+  .chapter-cover__about {
+    margin: 0;
+    padding: 18px 18px 28px;
+    border-radius: 10px;
+  }
+
+  .chapter-cover__about ul {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .chapter-info__wrapper {
+    max-width: 100%;
+  }
+
+  .chapter-info {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+
+  /* ──────────────────────────────────────────────────────────
+     2.3  СПЕЦ-БЛОКИ
+  ────────────────────────────────────────────────────────── */
+
+  /* ── Скептик ── */
+  /* Растягиваем по всей ширине вьюпорта, но без 100vw — оно даёт
+     overflow если есть скроллбар. Идём через отрицательный margin
+     ровно на padding'и .chapter.
+     Параллакс по скептику работает только при внутреннем скролле
+     .chapter, которого на мобиле нет — отменяем transform от JS. */
+  .skeptic {
+    width: auto;
+    max-width: none !important;
+    margin-left: calc(var(--mobile-pad-x) * -1);
+    margin-right: calc(var(--mobile-pad-x) * -1);
+    margin-top: 40px;
+    margin-bottom: 40px;
+    padding: 36px 20px 44px;
+    font-size: 19px;
+    line-height: 1.45;
+    transform: none !important;
+  }
+
+  .skeptic::before {
+    /* На узком экране уменьшаем разрыв между "WES" и "SKEPTIC" */
+    content: "WES   SKEPTIC";
+    letter-spacing: 0.12em;
+    font-size: 11px;
+  }
+
+
+  /* ── Science quote ── */
+  .science {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 0;
+    margin: 16px 0;
+  }
+
+  .text-column .science p {
+    font-size: 22px;
+    line-height: 1.4;
+  }
+
+  .science p.science-name {
+    font-size: 14px;
+  }
+
+
+  /* ── Inline code ── */
+  /* На мобиле nowrap создаёт горизонтальный скролл — разрешаем перенос */
+  code {
+    white-space: normal;
+    word-break: break-word;
+  }
+
+
+  /* ── Flow (горизонтальная схема) ── */
+  /* На мобиле всегда колонка, стрелки разворачиваем вниз */
+  .text-column .flow,
+  .text-column .flow--algorithm {
+    width: 100%;
+    max-width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .text-column .flow-arrow {
+    transform: rotate(90deg);
+    align-self: center;
+  }
+
+  /* В algorithm стрелок нет — это нормально */
+  .text-column .flow--algorithm .flow-step {
+    text-align: left;
+  }
+
+
+  /* ── Scroll-section ──────────────────────────────────────────
+     Логика как на десктопе: sticky-картинка по центру вьюпорта,
+     поверх неё скроллятся карточки. На мобиле общий window-скролл,
+     никакого внутреннего overflow.
+
+     Трюк: .scroll-section это 1×1 grid, в одну ячейку которого
+     попадают и .scroll-images, и .scroll-cards. Они визуально
+     наложены друг на друга, но высоту секции задаёт более высокий
+     ребёнок — .scroll-cards (N×100vh). .scroll-images внутри —
+     sticky на 100vh относительно window. */
+  .scroll-section {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    width: 100%;
+    position: relative;
+  }
+
+  /* Оба ребёнка кладутся в одну и ту же grid-ячейку */
+  .scroll-images,
+  .scroll-cards {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  /* Sticky-контейнер с картинками */
+  .scroll-images {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  /* Десктопные слои с подписями на мобиле не нужны */
+  .scroll-images > .scroll-image {
+    display: none;
+  }
+
+  /* Мобильные слои — кроссфейд через opacity */
+  .scroll-image--mobile {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+
+  .scroll-image--mobile.active {
+    opacity: 1;
+  }
+
+  .scroll-image--mobile img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: var(--color-background-secondary);
+  }
+
+  /* Карточки задают высоту секции — каждая 100vh */
+  .scroll-cards {
+    width: 100%;
+    gap: 0;
+    padding-bottom: 50vh;
+    position: relative;
+    z-index: 1;
+  }
+
+  .scroll-card {
+    width: 100%;
+    min-height: 100vh;
+    padding: 0 var(--mobile-pad-x);
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+  }
+
+  .card-inner {
+    padding: 20px;
+  }
+
+  .text-column .card-inner > * {
+    font-size: 16px;
+  }
+
+  /* Десктопные dot-индикаторы на мобиле скрываем — показываем мобильные */
+  .scroll-images > .gallery-dots:not(.gallery-dots--mobile) {
+    display: none;
+  }
+
+  .gallery-dots--mobile {
+    display: flex;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: column;
+    gap: 8px;
+    z-index: 2;
+  }
+}
+
+
+/* ── Блокировка прокрутки body при открытом drawer ── */
+@media (max-width: 768px) {
+  body.drawer-open {
+    overflow: hidden;
+  }
+}
+
+
+/* ──────────────────────────────────────────────────────────
+   2.4  SEARCH PAGE — mobile overrides
+────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  .search-page {
+    position: static;
+    width: 100%;
+    height: auto;
+    min-height: calc(100vh - var(--header-height));
+    margin-top: var(--header-height);
+    padding: 16px;
+    border-right: none;
+    border-bottom: none;
+    overflow-y: auto;
+  }
+
+  .search-placeholder {
+    display: none;
+  }
+
+  .search-page__results {
+    overflow-y: visible;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   3. УЗКИЙ МОБИЛЬНЫЙ  ≤375px
+   iPhone SE / маленькие Android.
+   ════════════════════════════════════════════════════════════════════ */
+@media (max-width: 375px) {
+
+  :root {
+    --mobile-pad-x: 14px;
+  }
+
+  /* Чуть мельче крупные заголовки */
+  h2,
+  .chapter-cover__titles h2 {
+    font-size: 38px;
+  }
+
+  h3 {
+    font-size: 22px;
+  }
+
+  .chapter {
+    font-size: 15px;
+  }
+
+  /* Скептик ужимаем в высоту и кегле */
+  .skeptic {
+    font-size: 17px;
+    padding: 28px 16px 36px;
+  }
+
+  .text-column .science p {
+    font-size: 20px;
+  }
+
+  /* Header — поджимаем иконки */
+  .navbar ul li {
+    width: 40px;
+    height: 40px;
+  }
+
+  .navbar ul li svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Avatar в meta-строке обложки чуть меньше */
+  .chapter-cover__author img {
+    width: 28px;
+    height: 28px;
+  }
+}
