@@ -971,7 +971,7 @@ blockquote {
 
 .text-column .flow-sublist li {
   position: relative;
-  font-size: 13px;
+  font-size: 16px;
   line-height: 1.4;
   color: var(--color-text-muted);
   padding-left: 10px;
@@ -1042,7 +1042,6 @@ blockquote {
   width: 100%;
   object-fit: cover;
   display: block;
-  background: var(--color-bg-secondary);
 }
 
 .scroll-image .img-label {

@@ -606,16 +606,6 @@
     --mobile-pad-x: 14px;
   }
 
-  /* Чуть мельче крупные заголовки */
-  h2,
-  .chapter-cover__titles h2 {
-    font-size: 38px;
-  }
-
-  h3 {
-    font-size: 22px;
-  }
-
   .chapter {
     font-size: 15px;
   }
