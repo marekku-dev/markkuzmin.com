@@ -43,11 +43,13 @@
 :root {
   --color-bg:             #FEFAF4;
   --color-bg-secondary:   #F5EDE2;
+  --color-bg-warm:        #F0E6D6;
   --color-text-primary:   #5C4033;
   --color-text-secondary: #9A7A68;
   --color-text-muted:     #7A5C4A;
   --color-accent:         #D0652A;
   --color-border-primary: #C9B89E;
+  --color-on-accent:      #ffffff;
 
   --border-width:    1px;
   --border-opacity:  1;
@@ -99,8 +101,8 @@ ul {
 code {
   font-family: "IBM Plex Mono", "Fira Mono", "Menlo", "Courier New", monospace;
   font-size: 0.82em;
-  background-color: #F0E6D6;
-  color: #A84A1A;
+  background-color: var(--color-bg-warm);
+  color: var(--color-accent);
   border-radius: 4px;
   padding: 2px 6px;
   border: 1px solid rgba(201, 184, 158, 0.5);
@@ -153,10 +155,10 @@ code {
   z-index: 100;
 }
 
-.logo {
+.navbar .logo {
   font-family: 'Instrument Serif';
-  font-size: 24px !important;
-  color: var(--color-accent) !important;
+  font-size: 24px;
+  color: var(--color-accent);
   letter-spacing: 0.5px;
 }
 
@@ -205,7 +207,7 @@ code {
   background-color: rgba(208, 101, 42, 0.12);
   color: var(--color-accent);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .navbar ul li.active:hover {
@@ -298,9 +300,9 @@ code {
 
 /* ── Search bar ── */
 .contents-search {
-  position: static !important;
-  bottom: auto !important;
-  width: 100% !important;
+  position: static;
+  bottom: auto;
+  width: 100%;
   margin: 10px 0 0 0;
   box-sizing: border-box;
 }
@@ -549,7 +551,7 @@ code {
   align-items: center;
   gap: 60px;
   font-size: 18px;
-  line-height: 26px;
+  line-height: 1.6;
 }
 
 /* ── Text column ── */
@@ -564,9 +566,9 @@ code {
 .text-column p {
   width: 100%;
   max-width: 580px;
-  text-align: justify;
   text-align-last: left;
   hyphens: auto;
+  hanging-punctuation: first last;
 }
 
 .text-column h2,
@@ -643,7 +645,7 @@ code {
 .chapter-cover__author img {
   width: 32px;
   height: 32px;
-  border-radius: 24px;
+  border-radius: 50%;
 }
 
 .chapter-cover__titles {
@@ -694,7 +696,7 @@ code {
 .chapter-cover__about ul li {
   font-size: 16px;
   line-height: 1.4;
-  color: #4A3020;
+  color: var(--color-text-primary);
   position: relative;
   margin: 0;
 }
@@ -749,7 +751,7 @@ code {
 }
 
 .text-column ul:not(.contents-extra):not(.chapter-main):not(.contents ul) li::before {
-  content: "–";
+  content: "—";
   position: absolute;
   left: 0;
   top: 0;
@@ -823,7 +825,7 @@ blockquote {
 .skeptic {
   position: relative;
   width: 100%;
-  max-width: 1200px !important;
+  max-width: 1200px;
   align-self: center;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
@@ -833,7 +835,7 @@ blockquote {
   font-size: 28px;
   line-height: 1.45;
   background-color: var(--color-accent);
-  color: #ffffff;
+  color: var(--color-on-accent);
   box-sizing: border-box;
 }
 
@@ -845,7 +847,7 @@ blockquote {
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.15em;
-  color: #ffffff;
+  color: var(--color-on-accent);
   pointer-events: none;
   margin-left: 1px;
 }
@@ -856,21 +858,21 @@ blockquote {
 
 .text-column .skeptic p {
   width: 100%;
-  max-width: none !important;
+  max-width: none;
   font-family: "Instrument Serif", sans-serif;
   font-size: 40px;
   line-height: 44px;
   margin: 0;
   text-align: left;
-  color: #ffffff;
+  color: var(--color-on-accent);
 }
 
 /* ── Science quote ── */
 .science {
   position: relative;
   font-family: "Instrument Serif";
-  width: min(800px, 100vw - 48px);
-  max-width: none;
+  width: 100%;
+  max-width: 900px;
   align-self: center;
   margin: 24px auto;
   padding: 32px 0;
@@ -890,6 +892,7 @@ blockquote {
   color: var(--color-text-primary);
   text-align: center;
   text-align-last: center;
+  hyphens: none;
 }
 
 .science p.science-name {
@@ -909,7 +912,7 @@ blockquote {
   align-items: stretch;
   gap: 8px;
   margin: 12px 0 20px 0;
-  background-color: #F7EFE0;
+  background-color: var(--color-bg-warm);
   border: 1px solid rgba(201, 184, 158, 0.6);
   border-radius: 10px;
   padding: 16px 14px;
@@ -1150,6 +1153,7 @@ blockquote {
 
 .contributors {
   cursor: pointer;
+  color: var(--color-text-secondary);
   transition: opacity 0.15s ease;
 }
 
@@ -1189,7 +1193,7 @@ blockquote {
 .contributor img {
   width: 32px;
   height: 32px;
-  border-radius: 24px;
+  border-radius: 50%;
 }
 
 .contributor p {
@@ -1303,7 +1307,7 @@ blockquote {
 
 .search-page__input-wrap--link:hover {
   border-color: var(--color-border-primary);
-  background-color: #EDE4D8;
+  background-color: var(--color-bg-secondary);
 }
 
 .search-page__input--placeholder {
@@ -1316,7 +1320,7 @@ blockquote {
 
 .search-page__kbd {
   flex-shrink: 0;
-  background: #EDE0D0;
+  background: var(--color-bg-warm);
   color: var(--color-text-secondary);
   border-radius: 4px;
   font-size: 11px;
@@ -1444,7 +1448,7 @@ blockquote {
 /* ── Suggestion chips ── */
 .sr-chip {
   display: inline-block;
-  background: #F0E6D6;
+  background: var(--color-bg-warm);
   color: var(--color-accent);
   border-radius: 5px;
   padding: 1px 8px;
@@ -1611,7 +1615,7 @@ blockquote {
   border: none;
   background: none;
   cursor: pointer;
-  color: #C9B89E;
+  color: var(--color-border-primary);
   padding: 4px;
   line-height: 0;
   transition: color 0.13s;
@@ -1619,7 +1623,7 @@ blockquote {
 }
 
 .search-overlay__dismiss:hover {
-  color: #5C4033;
+  color: var(--color-text-primary);
 }
 
 /* ── Body ── */
@@ -1664,20 +1668,20 @@ blockquote {
   height: 36px;
   align-items: center;
   gap: 8px;
-  background-color: #F5EDE2;
+  background-color: var(--color-bg-secondary);
   border-radius: 8px;
   padding: 6px 12px;
-  color: #9A7A68;
+  color: var(--color-text-secondary);
   transition: background 0.13s;
 }
 
 .contents-search-wrap:focus-within {
-  background-color: #EDE4D8;
+  background-color: var(--color-bg-secondary);
 }
 
 .contents-search-icon {
   flex-shrink: 0;
-  color: #9A7A68;
+  color: var(--color-text-secondary);
 }
 
 .contents-search-input {
@@ -1687,12 +1691,12 @@ blockquote {
   background: transparent;
   font-family: "Elms Sans", sans-serif;
   font-size: 14px;
-  color: #5C4033;
+  color: var(--color-text-primary);
   outline: none;
 }
 
 .contents-search-input::placeholder {
-  color: #9A7A68;
+  color: var(--color-text-secondary);
 }
 
 .contents-search-input::-webkit-search-cancel-button {
@@ -1704,7 +1708,7 @@ blockquote {
   border: none;
   background: none;
   cursor: pointer;
-  color: #9A7A68;
+  color: var(--color-text-secondary);
   font-size: 12px;
   line-height: 1;
   padding: 0;
@@ -1712,7 +1716,7 @@ blockquote {
 }
 
 .contents-search-clear:hover {
-  color: #5C4033;
+  color: var(--color-text-primary);
 }
 
 .contents-search-kbd {
@@ -1727,3 +1731,12 @@ blockquote {
 .bold   { font-weight: 700; }
 .medium { font-weight: 500; }
 .wip    { opacity: 0.35; }
+.abbr   { text-transform: uppercase; letter-spacing: 0.05em; }
+
+.aside {
+  font-size: 0.82em;
+  font-style: italic;
+  color: var(--color-text-secondary);
+  padding-left: 20px;
+  border-left: 2px solid var(--color-border-primary);
+}

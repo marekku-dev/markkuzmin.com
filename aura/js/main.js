@@ -45,7 +45,11 @@ function bindScrollspy() {
 }
 if (chapterEl) {
   bindScrollspy();
-  window.addEventListener('resize', bindScrollspy);
+  var scrollspyResizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(scrollspyResizeTimer);
+    scrollspyResizeTimer = setTimeout(bindScrollspy, 100);
+  });
 }
 
 // Универсальный плавный скролл к якорю — используется и для подразделов,
@@ -108,10 +112,14 @@ const tocCollapse = document.getElementById('toc-collapse');
 const wrapper = document.querySelector('.book__wrapper');
 
 // ── Tablet overlay ──────────────────────────────────────────────
-// Create once and reuse; separate from the mobile overlay.
-const tabletOverlay = document.createElement('div');
-tabletOverlay.className = 'tablet-overlay';
-document.body.appendChild(tabletOverlay);
+// Reuse existing .tablet-overlay if drawer.js already created it,
+// otherwise create it here.
+let tabletOverlay = document.querySelector('.tablet-overlay');
+if (!tabletOverlay) {
+  tabletOverlay = document.createElement('div');
+  tabletOverlay.className = 'tablet-overlay';
+  document.body.appendChild(tabletOverlay);
+}
 
 // ── Helpers ─────────────────────────────────────────────────────
 function isTablet() {
@@ -121,6 +129,30 @@ function isTablet() {
 function isMobile() {
   return window.innerWidth < 768;
 }
+
+// ── Mobile drawer (< 768px) ──────────────────────────────────────
+const mobileOverlay = document.getElementById('mobile-overlay');
+
+function openMobile() {
+  panel.classList.add('mobile-open');
+  if (mobileOverlay) mobileOverlay.classList.add('visible');
+  document.body.classList.add('drawer-open');
+}
+
+function closeMobile() {
+  panel.classList.remove('mobile-open');
+  if (mobileOverlay) mobileOverlay.classList.remove('visible');
+  document.body.classList.remove('drawer-open');
+}
+
+if (mobileOverlay) mobileOverlay.addEventListener('click', closeMobile);
+
+// Close mobile drawer when user taps a TOC item
+panel.addEventListener('click', function (e) {
+  if (!isMobile()) return;
+  const target = e.target.closest('li[data-target], a');
+  if (target) closeMobile();
+});
 
 const CONTENTS_WIDTH = {
   collapsed: '0px',
@@ -151,6 +183,10 @@ function closePanel() {
 }
 
 function togglePanel() {
+  if (isMobile()) {
+    panel.classList.contains('mobile-open') ? closeMobile() : openMobile();
+    return;
+  }
   if (isTablet()) {
     panel.classList.contains('tablet-open') ? closeTabletDrawer() : openTabletDrawer();
     return;
@@ -203,14 +239,15 @@ function showContents() {
 // ── Event listeners ───────────────────────────────────────────────
 tocCollapse.addEventListener('click', (e) => {
   e.preventDefault();
-  // Determine current state:
-  // - tablet: drawer open?
-  // - desktop: panel hidden?
+  if (isMobile()) {
+    panel.classList.contains('mobile-open') ? closeMobile() : openMobile();
+    return;
+  }
   if (isTablet()) {
     panel.classList.contains('tablet-open') ? hideContents() : showContents();
-  } else {
-    panel.style.display === 'none' ? showContents() : hideContents();
+    return;
   }
+  panel.style.display === 'none' ? showContents() : hideContents();
 });
 
 toggle.addEventListener('click', (e) => {
@@ -219,7 +256,8 @@ toggle.addEventListener('click', (e) => {
 });
 
 document.addEventListener('keydown', (e) => {
-  const isMac = navigator.platform.toUpperCase().includes('MAC');
+  const platform = (navigator.userAgentData?.platform ?? navigator.platform ?? '').toUpperCase();
+  const isMac = platform.includes('MAC');
   const modifier = isMac ? e.metaKey : e.ctrlKey;
 
   if (modifier && (e.key === 'k')) {
@@ -229,11 +267,9 @@ document.addEventListener('keydown', (e) => {
 
 
   if (e.key === 'Escape') {
-    if (isTablet()) {
-      closeTabletDrawer();
-    } else {
-      closePanel();
-    }
+    closeMobile();
+    closeTabletDrawer();
+    closePanel();
   }
 });
 
@@ -247,16 +283,21 @@ document.addEventListener('click', (e) => {
 });
 
 // ── Cleanup on resize ────────────────────────────────────────────
-// If user resizes from tablet → desktop, reset tablet state.
+// Reset state that doesn't belong to the current breakpoint.
+// Debounced to avoid running on every resize pixel.
+let tocResizeTimer;
 window.addEventListener('resize', () => {
-  if (!isTablet()) {
-    panel.classList.remove('tablet-open');
-    tabletOverlay.classList.remove('visible');
-    // Restore desktop defaults if they weren't manually hidden
-    if (panel.style.display !== 'none') {
-      setContentsWidth(CONTENTS_WIDTH.normal);
+  clearTimeout(tocResizeTimer);
+  tocResizeTimer = setTimeout(() => {
+    if (!isMobile()) closeMobile();
+    if (!isTablet()) {
+      panel.classList.remove('tablet-open');
+      tabletOverlay.classList.remove('visible');
+      if (panel.style.display !== 'none') {
+        setContentsWidth(CONTENTS_WIDTH.normal);
+      }
     }
-  }
+  }, 100);
 });
 
 

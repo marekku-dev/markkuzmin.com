@@ -27,14 +27,26 @@
     });
   }
 
+  // rAF-throttle: вызываем update не чаще одного раза за кадр
+  var rafPending = false;
+  function onScroll() {
+    if (rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(function () { update(); rafPending = false; });
+  }
+
   // Подписываемся на оба источника скролла, переподписываемся при ресайзе
   var currentScroller = null;
   function bind() {
-    if (currentScroller) currentScroller.removeEventListener('scroll', update);
+    if (currentScroller) currentScroller.removeEventListener('scroll', onScroll);
     currentScroller = getScroller();
-    currentScroller.addEventListener('scroll', update, { passive: true });
+    currentScroller.addEventListener('scroll', onScroll, { passive: true });
   }
   bind();
-  window.addEventListener('resize', bind);
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(bind, 100);
+  });
   update();
 })();

@@ -31,7 +31,7 @@
     width: 280px;
     height: 100%;
     z-index: 150;
-    background-color: #FEFAF4;
+    background-color: var(--color-bg);
     padding: 16px 12px 80px 16px;
     overflow-y: auto;
     transform: translateX(calc(-100% - var(--navbar-width)));
@@ -108,7 +108,7 @@
     justify-content: space-between;
     padding: 0 var(--mobile-pad-x);
     z-index: 200;
-    background-color: #FEFAF4;
+    background-color: var(--color-bg);
     border-bottom: var(--border-width) solid var(--color-border-primary);
   }
 
@@ -183,8 +183,8 @@
     display: block;
     width: 20px;
     height: 2px;
-    background: #4A2E16;
-    box-shadow: 0 5px 0 #4A2E16, 0 -5px 0 #4A2E16;
+    background: var(--color-text-primary);
+    box-shadow: 0 5px 0 var(--color-text-primary), 0 -5px 0 var(--color-text-primary);
   }
 
 
@@ -196,7 +196,7 @@
     width: min(var(--contents-width), 88vw);
     height: 100%;
     z-index: 300;
-    background-color: #FEFAF4;
+    background-color: var(--color-bg);
     padding: 0;
     overflow: hidden;
     transform: translateX(-100%);
@@ -514,7 +514,7 @@
     height: 100%;
     object-fit: contain;
     display: block;
-    background: var(--color-background-secondary);
+    background: var(--color-bg-secondary);
   }
 
   /* Карточки задают высоту секции — каждая 100vh */
@@ -635,5 +635,6 @@
   .chapter-cover__author img {
     width: 28px;
     height: 28px;
+    border-radius: 50%;
   }
 }

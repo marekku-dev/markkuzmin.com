@@ -166,7 +166,8 @@
 
     // ⌘/ — тоггл
     document.addEventListener('keydown', function (e) {
-      var isMac = navigator.platform.toUpperCase().includes('MAC');
+      var platform = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '').toUpperCase();
+      var isMac = platform.includes('MAC');
       var modifier = isMac ? e.metaKey : e.ctrlKey;
       if (modifier && e.key === '/') {
         e.preventDefault();
