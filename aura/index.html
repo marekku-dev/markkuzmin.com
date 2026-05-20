@@ -539,11 +539,77 @@
 <!-- Оверлей для мобильного drawer -->
 <div class="mobile-overlay" id="mobile-overlay"></div>
 
+<!-- Search overlay — replaces .chapter when active -->
+<div class="search-overlay" id="search-overlay" aria-hidden="true">
+	<button class="search-overlay__dismiss" id="search-overlay-close" aria-label="Close search">
+		<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+		</svg>
+	</button>
+
+	<div class="search-overlay__body">
+		<!-- Empty / initial state -->
+		<div class="sr-empty" id="so-empty">
+			<p class="sr-empty__title" id="so-empty-title">Search across all chapters</p>
+			<p class="sr-empty__hint">Results appear as you type. Try: <span class="sr-chip" data-query="value">value</span>, <span class="sr-chip" data-query="Job Graph">Job Graph</span>, <span class="sr-chip" data-query="problem">problem</span>, <span class="sr-chip" data-query="energy">energy</span></p>
+			<div class="sr-demo-label" id="so-demo-label">Results</div>
+			<div class="sr-demo" id="so-demo">
+				<a class="sr-card sr-card--demo" href="#what-is-value">
+					<span class="sr-card__title">What is value?</span>
+					<span class="sr-card__excerpt">…<mark>Value</mark> is performing the customer's Jobs more energy-efficiently than the alternatives. In other words, "<mark>value</mark>" is the proposition: we will perform your Job for fewer of your resources and deliver more in return…</span>
+				</a>
+				<a class="sr-card sr-card--demo" href="#value-flows">
+					<span class="sr-card__title">How <mark>value</mark> flows from the Job Graph</span>
+					<span class="sr-card__excerpt">…Even simpler: <mark>value</mark> is created by transforming and simplifying the Job Graph. ABSOLUTELY EVERY successful product decision ever made can be explained as the optimization of a Job Graph…</span>
+				</a>
+				<a class="sr-card sr-card--demo" href="#introduction">
+					<span class="sr-card__title">Introduction</span>
+					<span class="sr-card__excerpt">…The goal of Advanced Jobs To Be Done is to give you algorithms for solving the business problems product teams actually face…</span>
+				</a>
+				<a class="sr-card sr-card--demo" href="#algorithm">
+					<span class="sr-card__title">The algorithm for solving business problems</span>
+					<span class="sr-card__excerpt">…Business problems are solved by applying <mark>value</mark> mechanics to the Job Graphs of specific segments. That choice — which slices of which graphs you compete for — is product strategy…</span>
+				</a>
+				<a class="sr-card sr-card--demo" href="#everyone-says">
+					<span class="sr-card__title">Everyone says "create value" — nobody explains how</span>
+					<span class="sr-card__excerpt">…The overwhelming majority of product builders have no operational understanding of how to create <mark>value</mark>…</span>
+				</a>
+				<a class="sr-card sr-card--demo" href="#job-graph">
+					<span class="sr-card__title">The Job Graph</span>
+					<span class="sr-card__excerpt">…From understanding and reshaping the Job Graph, you derive <mark>value</mark>, product strategy, and the algorithms for solving business problems…</span>
+				</a>
+				<a class="sr-card sr-card--demo" href="#where-this-leads">
+					<span class="sr-card__title">Where this leads</span>
+					<span class="sr-card__excerpt">…<mark>Value</mark> is what happens when you transform a customer's Job Graph in a direction the brain notices as more energy-efficient than the alternatives…</span>
+				</a>
+				<a class="sr-card sr-card--wip sr-card--demo" href="#">
+					<span class="sr-card__wip">In progress</span>
+					<span class="sr-card__title">What Product <mark>Value</mark> Is and How to Create It</span>
+					<span class="sr-card__excerpt">…This chapter explores the full mechanics of product <mark>value</mark> creation, connecting needs, Jobs, and outcomes into a unified framework…</span>
+				</a>
+			</div>
+		</div>
+
+		<!-- No results state -->
+		<div class="sr-empty" id="so-no-results" style="display:none">
+			<p class="sr-empty__title">No results for "<span id="so-no-q"></span>"</p>
+			<p class="sr-empty__hint">Try a different word, or check the spelling.</p>
+		</div>
+
+		<!-- Live results -->
+		<div id="so-results" style="display:none">
+			<p class="sr-count" id="so-count"></p>
+			<div id="so-items" class="sr-demo"></div>
+		</div>
+	</div>
+</div>
+
 <script>window.AURA_ACTIVE_NAV = 'nav-book';</script>
 <script src="js/main.js"></script>
 <script src="js/cards.js"></script>
 <script src="js/drawer.js"></script>
 <script src="js/parallax.js"></script>
+<script src="js/search-overlay.js"></script>
 <script src="js/loader.js"></script>
 
 </body>

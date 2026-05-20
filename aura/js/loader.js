@@ -28,4 +28,8 @@
 
   // Scroll spy и клики по навигации — инициализируются в main.js
   if (typeof initPage === 'function') initPage();
+
+  // Поиск — инициализируется после монтирования _contents.html,
+  // т.к. инпут находится внутри него.
+  if (typeof initSearchOverlay === 'function') initSearchOverlay();
 })();

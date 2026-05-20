@@ -222,10 +222,11 @@ document.addEventListener('keydown', (e) => {
   const isMac = navigator.platform.toUpperCase().includes('MAC');
   const modifier = isMac ? e.metaKey : e.ctrlKey;
 
-  if (modifier && (e.key === 'k' || e.key === '/')) {
+  if (modifier && (e.key === 'k')) {
     e.preventDefault();
     togglePanel();
   }
+
 
   if (e.key === 'Escape') {
     if (isTablet()) {
