@@ -297,6 +297,18 @@ window.addEventListener('resize', () => {
         setContentsWidth(CONTENTS_WIDTH.normal);
       }
     }
+    // Синхронизируем иконку кнопки с реальным состоянием панели.
+    // На планшете contents всегда скрыт (drawer закрыт) — иконка должна
+    // смотреть "открыть". На десктопе — по реальному состоянию колонки.
+    if (tocCollapse) {
+      if (isTablet() || isMobile()) {
+        tocCollapse.classList.remove('is-collapsed');
+      } else {
+        const w = getComputedStyle(document.documentElement)
+          .getPropertyValue('--contents-width').trim();
+        tocCollapse.classList.toggle('is-collapsed', w === CONTENTS_WIDTH.collapsed);
+      }
+    }
   }, 100);
 });
 

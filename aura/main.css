@@ -1650,13 +1650,24 @@ blockquote {
 /* ── Overlay responsive ── */
 @media (min-width: 768px) and (max-width: 1279px) {
   .search-overlay {
-    left: 0;
+    left: var(--navbar-width, 80px);
     top: 0;
     z-index: 300;
   }
 
+  .search-overlay__bar {
+    display: block;
+    padding: 12px 52px 12px 16px;
+    border-bottom: 1px solid var(--color-border-primary);
+    background: var(--color-bg);
+  }
+
   .search-overlay__body {
     padding: 24px 24px 60px 24px;
+  }
+
+  .search-overlay__body .sr-demo {
+    grid-template-columns: 1fr;
   }
 }
 

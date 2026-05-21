@@ -356,9 +356,7 @@
   function openSearchOverlay() {
     if (!overlay) return;
     if (overlay.classList.contains('is-open')) return;
-    // На мобиле закрываем drawer, чтобы он не перекрывал оверлей.
-    // Сохраняем и восстанавливаем scrollY — снятие drawer-open с body
-    // может вызвать прыжок страницы.
+    // На мобиле и планшете закрываем drawer, чтобы он не перекрывал оверлей.
     if (window.innerWidth <= 768) {
       var savedScroll = window.pageYOffset;
       var panel = document.getElementById('contents-panel');
@@ -367,6 +365,11 @@
       if (mobileOverlay) mobileOverlay.classList.remove('visible');
       document.body.classList.remove('drawer-open');
       window.scrollTo(0, savedScroll);
+    } else if (window.innerWidth < 1280) {
+      var panel = document.getElementById('contents-panel');
+      var tabletOverlay = document.querySelector('.tablet-overlay');
+      if (panel) panel.classList.remove('tablet-open');
+      if (tabletOverlay) tabletOverlay.classList.remove('visible');
     }
     overlay.classList.add('is-open');
     overlay.removeAttribute('aria-hidden');
