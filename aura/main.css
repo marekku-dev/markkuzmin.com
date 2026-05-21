@@ -403,7 +403,9 @@ code {
   transition: opacity 0.2s ease;
 }
 
-.contents.is-open .contents-extra {
+.contents.is-open .contents-extra,
+.contents.tablet-open .contents-extra,
+.contents.mobile-open .contents-extra {
   display: block;
   opacity: 1;
 }
