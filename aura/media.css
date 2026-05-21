@@ -79,6 +79,11 @@
     display: block;
   }
 
+  .search-overlay__dismiss {
+    top: 19px;
+    right: 16px;
+  }
+
   .hotkey {
     display: none !important;
   }
