@@ -873,6 +873,7 @@ blockquote {
   margin: 0;
   text-align: left;
   color: var(--color-on-accent);
+  hyphens: none;
 }
 
 /* ── Science quote ── */
