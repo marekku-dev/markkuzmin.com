@@ -177,9 +177,15 @@
     });
 
     // ── Кнопки очистки (десктоп и мобиле) ──
+    // На десктопе/планшете: если строка пустая — закрываем оверлей;
+    // если есть текст — очищаем и остаёмся.
     function wireClear(btn, srcInput) {
       if (!btn) return;
       btn.addEventListener('click', function () {
+        if (window.innerWidth > 768) {
+          closeSearchOverlay();
+          return;
+        }
         srcInput.value = '';
         syncValue(srcInput);
         runSearch();
@@ -257,14 +263,11 @@
       }
     });
 
-    // Клик мимо — закрыть (но не если клик по самому инпуту/wrap).
-    // ВАЖНО: первые ~350ms после открытия игнорируем outside-click. На мобиле
-    // тап по инпуту в drawer триггерит pointerdown→openSearchOverlay, а затем
-    // браузер досылает синтетический click — этот click уже приходит, когда
-    // drawer-инпут визуально скрыт за оверлеем, и без защиты воспринимался
-    // как «клик мимо» и сразу закрывал оверлей.
+    // Клик мимо — закрыть только на мобиле.
+    // На десктопе/планшете оверлей закрывается только через Esc, ⌘/ или крестик.
     document.addEventListener('click', function (e) {
       if (!overlay.classList.contains('is-open')) return;
+      if (window.innerWidth > 768) return;
       if (Date.now() - openedAt < 350) return;
       var wrap = document.getElementById('contents-search-wrap');
       if (overlay.contains(e.target)) return;
