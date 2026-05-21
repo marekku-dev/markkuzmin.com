@@ -1,6 +1,6 @@
 
 /* ═══════════════════════════════════════════════════════════
-   1. FONTS
+   1. FONTS (Both – Google Fonts)
 ═══════════════════════════════════════════════════════════ */
 
 @font-face {
@@ -99,8 +99,7 @@ ul {
 }
 
 code {
-  font-family: "IBM Plex Mono", "Fira Mono", "Menlo", "Courier New", monospace;
-  font-size: 0.82em;
+  font-family: "Elms Sans", monospace;
   background-color: var(--color-bg-warm);
   color: var(--color-accent);
   border-radius: 4px;
@@ -583,6 +582,15 @@ code {
   max-width: 900px;
 }
 
+/* ── Footnote ── */
+.aside {
+  font-size: 14px;
+  font-style: italic;
+  color: var(--color-text-secondary);
+  padding-left: 16px;
+  border-left: 2px solid var(--color-border-primary);
+}
+
 /* Divider after text-column */
 .chapter > .text-column::after {
   content: "";
@@ -754,7 +762,7 @@ code {
   content: "—";
   position: absolute;
   left: 0;
-  top: 0;
+  top: -1px;
   color: var(--color-accent);
   font-weight: 600;
   line-height: 1.6;
@@ -797,11 +805,9 @@ code {
   left: 0;
   top: 0;
   font-family: "Elms Sans", sans-serif;
-  font-size: 0.78em;
+  /*font-size: 18px;*/
   font-weight: 700;
   color: var(--color-accent);
-  line-height: 1.9;
-  letter-spacing: 0.01em;
 }
 
 /* Nested ul inside ol */
@@ -1626,6 +1632,11 @@ blockquote {
   color: var(--color-text-primary);
 }
 
+/* ── Mobile search bar inside overlay (hidden on tablet/desktop) ── */
+.search-overlay__bar {
+  display: none;
+}
+
 /* ── Body ── */
 .search-overlay__body {
   flex: 1;
@@ -1646,11 +1657,18 @@ blockquote {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .search-overlay {
     left: 0;
     top: 0;
-    z-index: 300;
+    z-index: 400;
+  }
+
+  .search-overlay__bar {
+    display: block;
+    padding: 12px 52px 12px 16px; /* right padding leaves room for the × button */
+    border-bottom: 1px solid var(--color-border-secondary, rgba(0,0,0,0.08));
+    background: var(--color-bg);
   }
 
   .search-overlay__body {
@@ -1732,11 +1750,3 @@ blockquote {
 .medium { font-weight: 500; }
 .wip    { opacity: 0.35; }
 .abbr   { text-transform: uppercase; letter-spacing: 0.05em; }
-
-.aside {
-  font-size: 0.82em;
-  font-style: italic;
-  color: var(--color-text-secondary);
-  padding-left: 20px;
-  border-left: 2px solid var(--color-border-primary);
-}

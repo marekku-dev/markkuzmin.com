@@ -84,14 +84,41 @@
   }
 
   // ── DOM ──────────────────────────────────────────────────────────
-  var overlay, input, clearBtn, closeBtn,
+  // input/clearBtn — десктопные (в drawer); mobileInput/mobileClearBtn —
+  // дубль внутри оверлея, нужен потому что на мобиле drawer закрывается
+  // при открытии оверлея и десктопный инпут становится недоступен.
+  var overlay, input, mobileInput, clearBtn, mobileClearBtn, closeBtn,
       elEmpty, elEmptyTitle, elDemoLabel, elDemo,
       elNoResults, elResults, elCount, elItems, elKbd;
+
+  // Timestamp последнего открытия — нужен, чтобы игнорировать «фантомные»
+  // клики, прилетающие сразу после открытия оверлея (см. обработчик
+  // демо-карточек и outside-click handler).
+  var openedAt = 0;
+
+  function inputs() {
+    return [input, mobileInput].filter(Boolean);
+  }
+
+  function activeInput() {
+    // Mobile input живёт внутри overlay и доступен на мобиле;
+    // desktop input — в drawer и нужен на десктопе/таблете.
+    if (window.innerWidth <= 768 && mobileInput) return mobileInput;
+    return input;
+  }
+
+  function syncValue(source) {
+    inputs().forEach(function (el) {
+      if (el !== source) el.value = source.value;
+    });
+  }
 
   function initSearchOverlay() {
     overlay     = document.getElementById('search-overlay');
     input       = document.getElementById('search-overlay-input');
+    mobileInput = document.getElementById('search-overlay-input-mobile');
     clearBtn    = document.getElementById('search-overlay-clear');
+    mobileClearBtn = document.getElementById('search-overlay-clear-mobile');
     closeBtn    = document.getElementById('search-overlay-close');
     elEmpty      = document.getElementById('so-empty');
     elEmptyTitle = document.getElementById('so-empty-title');
@@ -105,30 +132,62 @@
 
     if (!overlay || !input) return;
 
-    // ── Фокус на инпут → открыть оверлей ──
-    input.addEventListener('focus', function () {
-      openSearchOverlay();
-    });
+    inputs().forEach(function (el) {
+      // ── Тап/клик по инпуту → открыть оверлей ──
+      // pointerdown срабатывает раньше focus и click, позволяет preventDefault
+      // на мобиле чтобы браузер не генерировал призрачный click после touchend.
+      el.addEventListener('pointerdown', function (e) {
+        e.stopPropagation();
+        if (!overlay.classList.contains('is-open')) {
+          e.preventDefault();          // отменяем призрачный click на мобиле
+          openSearchOverlay();
+          // Ставим фокус на правильный инпут — на мобиле drawer
+          // закрывается, поэтому фокус должен быть на mobileInput.
+          setTimeout(function () {
+            var target = activeInput();
+            if (target) target.focus();
+          }, 50);
+        }
+      });
 
-    // ── Ввод → поиск ──
-    input.addEventListener('input', runSearch);
+      // Любой click по инпуту не должен пузыриться до document — иначе
+      // глобальный outside-click handler примет его за «клик мимо».
+      el.addEventListener('click', function (e) {
+        e.stopPropagation();
+      });
 
-    // ── Esc внутри инпута ──
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        closeSearchOverlay();
-      }
-    });
+      // ── Фокус на инпут → открыть оверлей (десктоп: Tab без клика) ──
+      el.addEventListener('focus', function () {
+        openSearchOverlay();
+      });
 
-    // ── Кнопка очистки ──
-    if (clearBtn) {
-      clearBtn.addEventListener('click', function () {
-        input.value = '';
+      // ── Ввод → синхронизируем оба инпута и запускаем поиск ──
+      el.addEventListener('input', function () {
+        syncValue(el);
         runSearch();
-        input.focus();
+      });
+
+      // ── Esc внутри инпута ──
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          closeSearchOverlay();
+        }
+      });
+    });
+
+    // ── Кнопки очистки (десктоп и мобиле) ──
+    function wireClear(btn, srcInput) {
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        srcInput.value = '';
+        syncValue(srcInput);
+        runSearch();
+        srcInput.focus();
       });
     }
+    wireClear(clearBtn, input);
+    wireClear(mobileClearBtn, mobileInput);
 
     // ── Крестик в углу оверлея ──
     if (closeBtn) {
@@ -141,9 +200,14 @@
     if (elEmpty) {
       elEmpty.querySelectorAll('.sr-chip').forEach(function (chip) {
         chip.addEventListener('click', function () {
-          input.value = chip.dataset.query || chip.textContent;
-          runSearch();
-          input.focus();
+          var q = chip.dataset.query || chip.textContent;
+          var target = activeInput();
+          if (target) {
+            target.value = q;
+            syncValue(target);
+            runSearch();
+            target.focus();
+          }
         });
       });
     }
@@ -152,6 +216,14 @@
     if (overlay) {
       overlay.querySelectorAll('.sr-card--demo').forEach(function (card) {
         card.addEventListener('click', function (e) {
+          // На мобиле тап по инпуту в drawer триггерит pointerdown→open,
+          // drawer уезжает, и синтетический click после touchend приземляется
+          // уже на демо-карточку под пальцем. Игнорируем такие «фантомные»
+          // клики в первые ~400мс после открытия.
+          if (Date.now() - openedAt < 400) {
+            e.preventDefault();
+            return;
+          }
           var href = card.getAttribute('href');
           if (href && href !== '#') {
             e.preventDefault();
@@ -174,7 +246,8 @@
         if (overlay.classList.contains('is-open')) {
           closeSearchOverlay();
         } else {
-          input.focus(); // откроет через focus-listener
+          var target = activeInput();
+          if (target) target.focus(); // откроет через focus-listener
         }
         return;
       }
@@ -184,9 +257,15 @@
       }
     });
 
-    // Клик мимо — закрыть (но не если клик по самому инпуту/wrap)
+    // Клик мимо — закрыть (но не если клик по самому инпуту/wrap).
+    // ВАЖНО: первые ~350ms после открытия игнорируем outside-click. На мобиле
+    // тап по инпуту в drawer триггерит pointerdown→openSearchOverlay, а затем
+    // браузер досылает синтетический click — этот click уже приходит, когда
+    // drawer-инпут визуально скрыт за оверлеем, и без защиты воспринимался
+    // как «клик мимо» и сразу закрывал оверлей.
     document.addEventListener('click', function (e) {
       if (!overlay.classList.contains('is-open')) return;
+      if (Date.now() - openedAt < 350) return;
       var wrap = document.getElementById('contents-search-wrap');
       if (overlay.contains(e.target)) return;
       if (wrap && wrap.contains(e.target)) return;
@@ -196,11 +275,14 @@
 
   // ── Поиск ────────────────────────────────────────────────────────
   function runSearch() {
-    var q = input ? input.value.trim() : '';
+    // Берём значение из любого инпута, где оно есть (они синхронизированы).
+    var src = activeInput() || input;
+    var q = src ? src.value.trim() : '';
 
     // крестик и ⌘/ взаимоисключают друг друга
-    if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
-    if (elKbd)    elKbd.style.display    = q ? 'none'  : '';
+    if (clearBtn)       clearBtn.style.display       = q ? 'block' : 'none';
+    if (mobileClearBtn) mobileClearBtn.style.display = q ? 'block' : 'none';
+    if (elKbd)          elKbd.style.display          = q ? 'none'  : '';
 
     // заголовок — обновляем только при 3+ символах
     if (elEmptyTitle) {
@@ -271,9 +353,22 @@
   function openSearchOverlay() {
     if (!overlay) return;
     if (overlay.classList.contains('is-open')) return;
+    // На мобиле закрываем drawer, чтобы он не перекрывал оверлей.
+    // Сохраняем и восстанавливаем scrollY — снятие drawer-open с body
+    // может вызвать прыжок страницы.
+    if (window.innerWidth <= 768) {
+      var savedScroll = window.pageYOffset;
+      var panel = document.getElementById('contents-panel');
+      var mobileOverlay = document.getElementById('mobile-overlay');
+      if (panel) panel.classList.remove('mobile-open');
+      if (mobileOverlay) mobileOverlay.classList.remove('visible');
+      document.body.classList.remove('drawer-open');
+      window.scrollTo(0, savedScroll);
+    }
     overlay.classList.add('is-open');
     overlay.removeAttribute('aria-hidden');
     document.body.classList.add('search-overlay-active');
+    openedAt = Date.now();
     hide(elNoResults);
     hide(elResults);
   }
@@ -283,15 +378,16 @@
     overlay.classList.remove('is-open');
     overlay.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('search-overlay-active');
-    if (input) {
-      input.value = '';
-      input.blur();
-    }
-    if (clearBtn)     clearBtn.style.display     = 'none';
-    if (elKbd)        elKbd.style.display        = '';
-    if (elEmptyTitle) elEmptyTitle.textContent   = 'Search across all chapters';
-    if (elDemoLabel)  elDemoLabel.style.display  = '';
-    if (elDemo)       elDemo.style.display       = '';
+    inputs().forEach(function (el) {
+      el.value = '';
+      el.blur();
+    });
+    if (clearBtn)       clearBtn.style.display       = 'none';
+    if (mobileClearBtn) mobileClearBtn.style.display = 'none';
+    if (elKbd)          elKbd.style.display          = '';
+    if (elEmptyTitle)   elEmptyTitle.textContent     = 'Search across all chapters';
+    if (elDemoLabel)    elDemoLabel.style.display    = '';
+    if (elDemo)         elDemo.style.display         = '';
   }
 
   // ── Утилиты ──────────────────────────────────────────────────────
